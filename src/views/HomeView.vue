@@ -4,14 +4,8 @@ import LabelDesigner from '@/components/label-designer/LabelDesigner.vue';
 import LabelDrawing from '@/components/LabelDrawing.vue';
 import PrinterStatusCard from '@/components/PrinterStatusCard.vue';
 import { useWebSerial } from '@/composables/useWebSerial';
-import { parsePrinterStatus, PrinterReadyStatus, type PrinterStatus } from '@/core/PrinterStatus';
-import {
-  BluetoothConnected,
-  BluetoothIcon,
-  BluetoothOff,
-  CableIcon,
-  Printer,
-} from 'lucide-vue-next';
+import { parsePrinterStatus, type PrinterStatus } from '@/core/PrinterStatus';
+import { BluetoothIcon, OctagonAlertIcon } from 'lucide-vue-next';
 import { onUnmounted, ref, useTemplateRef } from 'vue';
 
 const textDecoder = new TextDecoder();
@@ -23,7 +17,7 @@ const printerStatus = ref<PrinterStatus | null>(null);
 const editorRef = useTemplateRef('editorRef');
 const drawAreaRef = useTemplateRef('drawAreaRef');
 
-const { open, connected, write, close } = useWebSerial((data) => {
+const { open, connected, write, close, isSupported } = useWebSerial((data) => {
   console.log('IN', data);
   const msg = textDecoder.decode(data);
 
@@ -143,7 +137,7 @@ onUnmounted(() => {
   <main class="p-6 flex gap-5 justify-center">
     <div class="flex gap-3 flex-col">
       <div>
-        <AppButton class="text-lg" type="button" @click="handleConnect">
+        <AppButton class="text-lg" type="button" @click="handleConnect" :disabled="!isSupported">
           Connect
           <div class="rounded-full bg-white text-brand ml-2 p-2 -mr-1">
             <BluetoothIcon :size="18" />
@@ -156,6 +150,10 @@ onUnmounted(() => {
         <AppButton type="button" @click="getPrinterInfo">Get Printer Info</AppButton>
         <AppButton type="button" @click="print">PRINT</AppButton>
         <PrinterStatusCard v-if="printerStatus" :printer-status="printerStatus" class="mt-4" />
+      </div>
+      <div v-if="!isSupported" class="max-w-35 border-red-500 bg-red-200 border rounded-lg p-4">
+        <OctagonAlertIcon :size="24" class="text-red-600 mb-2" />
+        Web Serial API is not supported in this browser.
       </div>
     </div>
     <div class="w-px bg-gray-300 shrink-0"></div>

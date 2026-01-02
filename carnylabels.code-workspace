@@ -20,8 +20,12 @@
 		},
 		"editor.formatOnSave": true,
 		"editor.defaultFormatter": "prettier.prettier-vscode",
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": "explicit",
+		},
 		"[typescript]": {
 			"editor.defaultFormatter": "prettier.prettier-vscode"
-		}
+		},
+		"oxc.typeAware": true
 	}
 }

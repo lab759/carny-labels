@@ -2,7 +2,7 @@
 
 <template>
   <button
-    class="rounded-full border px-4 py-2 bg-brand text-white hover:bg-brand/80 flex gap-2 items-center text-md"
+    class="rounded-full border px-4 py-2 bg-brand text-white hover:bg-brand/80 flex gap-2 items-center text-md disabled:opacity-50"
   >
     <slot></slot>
   </button>

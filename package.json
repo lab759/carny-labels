@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
+    "lint": "oxlint --type-aware src/",
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
@@ -29,6 +30,8 @@
     "@vitejs/plugin-vue": "^6.0.3",
     "@vue/tsconfig": "^0.8.1",
     "npm-run-all2": "^8.0.4",
+    "oxlint": "^1.36.0",
+    "oxlint-tsgolint": "^0.10.1",
     "prettier": "3.7.4",
     "typescript": "~5.9.3",
     "vite": "npm:rolldown-vite@latest",
