@@ -68,7 +68,7 @@ async function print() {
    * - 3: not in spec but used by PM220
    *
    * P21: 1
-   * PM220: 3
+   * PM220: 3 (but 1 seems to work just fine)
    */
   const bitmapMode = 1;
   /**
@@ -78,7 +78,7 @@ async function print() {
   const mirror = 0; // 0 or 1
   /**
    * P21: 1
-   * PM220: 0
+   * PM220: 0 (1 works too, does not really matter)
    */
   const direction = 1;
   /**
@@ -165,7 +165,6 @@ async function print() {
 }
 
 function handleImageDataUpdate(data: ImageDataArray | undefined) {
-  console.log('Received image data update:', data);
   const context = drawAreaRef.value?.canvas?.getContext('2d');
   if (!context || !data) return;
   for (let pixelIndex = 0; pixelIndex < data.length; pixelIndex += 4) {

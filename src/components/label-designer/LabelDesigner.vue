@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { Canvas, FabricText, Textbox } from 'fabric';
+import { Canvas, Textbox } from 'fabric';
 import { markRaw, onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
-import AppButton from '../AppButton.vue';
 import Toolbar from './Toolbar.vue';
 
 const canvasRef = useTemplateRef<HTMLCanvasElement>('canvasRef');
@@ -88,7 +87,6 @@ defineExpose({
       tabindex="0"
       @keydown.delete="
         () => {
-          console.log('Delete key pressed');
           const activeObject = fabricCanvas?.getActiveObject();
           if (activeObject) {
             fabricCanvas?.remove(activeObject);
