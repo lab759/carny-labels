@@ -96,12 +96,7 @@ defineExpose({
         }
       "
     >
-      <canvas
-        ref="canvasRef"
-        :width="props.width"
-        :height="props.height"
-        class="border border-dotted w-150"
-      ></canvas>
+      <canvas ref="canvasRef" class="border border-dotted w-150"></canvas>
     </div>
     <Toolbar v-if="fabricCanvas" class="mt-2" :canvas="fabricCanvas as Canvas" />
   </div>

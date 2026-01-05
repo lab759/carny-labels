@@ -5,6 +5,7 @@ import LabelDrawing from '@/components/LabelDrawing.vue';
 import PrinterStatusCard from '@/components/PrinterStatusCard.vue';
 import { useWebSerial } from '@/composables/useWebSerial';
 import { parsePrinterStatus, type PrinterStatus } from '@/core/PrinterStatus';
+import { convertToGreyscaleByLuminance, ditherWithAtkinson } from '@/utils/image';
 import { BluetoothIcon, OctagonAlertIcon } from 'lucide-vue-next';
 import { onUnmounted, ref, useTemplateRef } from 'vue';
 
@@ -94,14 +95,11 @@ async function print() {
 
   const context = drawAreaRef.value?.canvas?.getContext('2d', { willReadFrequently: true });
 
-  //  const editorContext = editorRef.value?.canvas?.getContext('2d', { willReadFrequently: true });
-  const editorContext = editorRef.value?.fabricCanvas?.toCanvasElement().getContext('2d');
-
-  if (!context || !editorContext) {
+  if (!context) {
     throw new Error('No context data available');
   }
 
-  const imageData = editorContext.getImageData(
+  const imageData = context.getImageData(
     0,
     0,
     printerOrientationHeight,
@@ -117,15 +115,6 @@ async function print() {
       const alpha =
         imageData[(x * printerOrientationHeight + printerOrientationHeight - y) * 4 + 3] ?? 0;
       const pixelOn = alpha > 0 && red < 200;
-      context.putImageData(
-        new ImageData(
-          new Uint8ClampedArray([pixelOn ? 0 : 255, pixelOn ? 0 : 255, pixelOn ? 0 : 255, 255]),
-          1,
-          1,
-        ),
-        printerOrientationHeight - y,
-        x,
-      );
       const byteIndex = Math.floor(index / 8);
       const bitIndex = 7 - (index % 8);
       if (!pixelOn) {
@@ -167,16 +156,9 @@ async function print() {
 function handleImageDataUpdate(data: ImageDataArray | undefined) {
   const context = drawAreaRef.value?.canvas?.getContext('2d');
   if (!context || !data) return;
-  for (let pixelIndex = 0; pixelIndex < data.length; pixelIndex += 4) {
-    const red = data[pixelIndex + 0] ?? 0;
-    const alpha = data[pixelIndex + 3] ?? 0;
-    const pixelOn = alpha > 0 && red < 200;
-    data[pixelIndex + 0] = pixelOn ? 0 : 255;
-    data[pixelIndex + 1] = pixelOn ? 0 : 255;
-    data[pixelIndex + 2] = pixelOn ? 0 : 255;
-    data[pixelIndex + 3] = 255;
-  }
-  context?.putImageData(new ImageData(data, width.value, height.value), 0, 0);
+  convertToGreyscaleByLuminance(data);
+  const ditheredData = ditherWithAtkinson(data, width.value, false);
+  context?.putImageData(new ImageData(ditheredData, width.value, height.value), 0, 0);
 }
 
 function handleDisconnect() {
