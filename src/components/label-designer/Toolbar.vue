@@ -49,6 +49,7 @@ async function loadSvgData(event: Event) {
           const textBox = new Textbox('New Text', {
             left: 50,
             top: 50,
+            textAlign: 'center',
           });
           props.canvas?.add(textBox);
           props.canvas?.renderAll();

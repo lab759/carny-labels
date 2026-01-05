@@ -15,7 +15,6 @@ const waitingForPrinterInfoResponse = ref(false);
 
 const printerStatus = ref<PrinterStatus | null>(null);
 
-const editorRef = useTemplateRef('editorRef');
 const drawAreaRef = useTemplateRef('drawAreaRef');
 
 const width = ref(240);

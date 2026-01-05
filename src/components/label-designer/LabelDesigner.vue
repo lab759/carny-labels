@@ -2,6 +2,7 @@
 import { Canvas, Textbox } from 'fabric';
 import { markRaw, onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
 import Toolbar from './Toolbar.vue';
+import ToolPanel from './ToolPanel.vue';
 
 const canvasRef = useTemplateRef<HTMLCanvasElement>('canvasRef');
 const fabricCanvas = ref<Canvas | null>(null);
@@ -99,6 +100,7 @@ defineExpose({
       <canvas ref="canvasRef" class="border border-dotted w-150"></canvas>
     </div>
     <Toolbar v-if="fabricCanvas" class="mt-2" :canvas="fabricCanvas as Canvas" />
+    <ToolPanel v-if="fabricCanvas" class="mt-2" :canvas="fabricCanvas as Canvas" />
   </div>
 </template>
 
