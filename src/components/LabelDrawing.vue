@@ -3,6 +3,17 @@ import { onMounted, useTemplateRef } from 'vue';
 
 const canvasRef = useTemplateRef<HTMLCanvasElement>('canvasRef');
 
+const props = withDefaults(
+  defineProps<{
+    width?: number;
+    height?: number;
+  }>(),
+  {
+    width: 284,
+    height: 96,
+  },
+);
+
 onMounted(() => {
   const canvas = canvasRef.value;
   if (canvas) {
@@ -35,7 +46,12 @@ defineExpose({
 </script>
 
 <template>
-  <canvas ref="canvasRef" width="284" height="96" class="border border-dotted"></canvas>
+  <canvas
+    ref="canvasRef"
+    :width="props.width"
+    :height="props.height"
+    class="border border-dotted"
+  ></canvas>
 </template>
 
 <style scoped>

@@ -17,6 +17,9 @@ const printerStatus = ref<PrinterStatus | null>(null);
 const editorRef = useTemplateRef('editorRef');
 const drawAreaRef = useTemplateRef('drawAreaRef');
 
+const width = ref(240);
+const height = ref(320);
+
 const { open, connected, write, close, isSupported } = useWebSerial((data) => {
   console.log('IN', data);
   const msg = textDecoder.decode(data);
@@ -53,8 +56,42 @@ async function getPrinterInfo() {
 }
 
 async function print() {
-  const width = 96;
-  const height = 284;
+  const printerOrientationWidth = height.value;
+  const printerOrientationWidthInBytes = Math.ceil(height.value / 8);
+  const printerOrientationHeight = width.value;
+  const density = 10;
+  /**
+   * Spec:
+   * - 0: Override,
+   * - 1: OR,
+   * - 2: XOR,
+   * - 3: not in spec but used by PM220
+   *
+   * P21: 1
+   * PM220: 3
+   */
+  const bitmapMode = 1;
+  /**
+   * P21: 1
+   * PM220: 0
+   */
+  const mirror = 0; // 0 or 1
+  /**
+   * P21: 1
+   * PM220: 0
+   */
+  const direction = 1;
+  /**
+   *
+   */
+  // const labelWidth = '14.0 mm';
+  // const labelHeight = '40.0 mm';
+  const labelWidth = '40.0 mm';
+  const labelHeight = '30.0 mm';
+
+  // const gapWidth = '5.0 mm';
+  const gapWidth = '6.0 mm';
+
   const context = drawAreaRef.value?.canvas?.getContext('2d', { willReadFrequently: true });
 
   //  const editorContext = editorRef.value?.canvas?.getContext('2d', { willReadFrequently: true });
@@ -64,14 +101,21 @@ async function print() {
     throw new Error('No context data available');
   }
 
-  const imageData = editorContext.getImageData(0, 0, height, width).data;
-  const buffer = new Uint8Array((width * height) / 8);
+  const imageData = editorContext.getImageData(
+    0,
+    0,
+    printerOrientationHeight,
+    printerOrientationWidth,
+  ).data;
+  const buffer = new Uint8Array((printerOrientationWidth * printerOrientationHeight) / 8);
 
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const index = y * width + x;
-      const red = imageData[(x * height + height - y) * 4 + 0] ?? 0;
-      const alpha = imageData[(x * height + height - y) * 4 + 3] ?? 0;
+  for (let y = 0; y < printerOrientationHeight; y++) {
+    for (let x = 0; x < printerOrientationWidth; x++) {
+      const index = y * printerOrientationWidth + x;
+      const red =
+        imageData[(x * printerOrientationHeight + printerOrientationHeight - y) * 4 + 0] ?? 0;
+      const alpha =
+        imageData[(x * printerOrientationHeight + printerOrientationHeight - y) * 4 + 3] ?? 0;
       const pixelOn = alpha > 0 && red < 200;
       context.putImageData(
         new ImageData(
@@ -79,7 +123,7 @@ async function print() {
           1,
           1,
         ),
-        height - y,
+        printerOrientationHeight - y,
         x,
       );
       const byteIndex = Math.floor(index / 8);
@@ -92,15 +136,27 @@ async function print() {
       }
     }
   }
+
+  /**
+    PM220:
+    SIZE 40.0 mm,30.0 mm
+    GAP 6.0 mm,0 mm
+     DIRECTION 0,0
+     DENSITY 10
+     CLS
+     BITMAP 0,0,40,240,3,
+   */
   console.log('PRINT BUFFER', buffer);
   const outBuffer = new Uint8Array([
     ...textEncoder.encode('\x1b!o\r\n'),
-    ...textEncoder.encode('SIZE 14.0 mm,40.0 mm\r\n'),
-    ...textEncoder.encode('GAP 5.0mm, 0 mm\r\n'),
-    ...textEncoder.encode('DIRECTION 1,1\r\n'),
-    ...textEncoder.encode('DENSITY 15\r\n'),
+    ...textEncoder.encode(`SIZE ${labelWidth},${labelHeight}\r\n`),
+    ...textEncoder.encode(`GAP ${gapWidth}, 0 mm\r\n`),
+    ...textEncoder.encode(`DIRECTION ${direction},${mirror}\r\n`),
+    ...textEncoder.encode(`DENSITY ${density}\r\n`),
     ...textEncoder.encode('CLS\r\n'),
-    ...textEncoder.encode('BITMAP 0,0,12,284,1,'),
+    ...textEncoder.encode(
+      `BITMAP 0,0,${printerOrientationWidthInBytes},${printerOrientationHeight},${bitmapMode},`,
+    ),
     ...buffer,
     ...textEncoder.encode('\r\n'),
     ...textEncoder.encode('PRINT 1\r\n'),
@@ -121,7 +177,7 @@ function handleImageDataUpdate(data: ImageDataArray | undefined) {
     data[pixelIndex + 2] = pixelOn ? 0 : 255;
     data[pixelIndex + 3] = 255;
   }
-  context?.putImageData(new ImageData(data, 284, 96), 0, 0);
+  context?.putImageData(new ImageData(data, width.value, height.value), 0, 0);
 }
 
 function handleDisconnect() {
@@ -158,9 +214,14 @@ onUnmounted(() => {
     </div>
     <div class="w-px bg-gray-300 shrink-0"></div>
     <div>
-      <div class="mt-6"><LabelDrawing ref="drawAreaRef" /></div>
+      <div class="mt-6"><LabelDrawing :width="width" :height="height" ref="drawAreaRef" /></div>
       <div class="mt-6">
-        <LabelDesigner ref="editorRef" @update:imageData="handleImageDataUpdate" />
+        <LabelDesigner
+          :width="width"
+          :height="height"
+          ref="editorRef"
+          @update:imageData="handleImageDataUpdate"
+        />
       </div>
     </div>
   </main>

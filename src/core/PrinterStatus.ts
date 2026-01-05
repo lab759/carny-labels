@@ -25,20 +25,20 @@ export enum PaperType {
 export type PrinterStatus = {
   printerStatus: PrinterReadyStatus;
   dataLength: number;
-  dataUnknown: number;
-  dataUnknown2: number;
+  dataUnknown: number; // PM220: 1   (all 40x30 labels)
+  dataUnknown2: number; // PM220: 34
   labelColor: LabelColor;
   /** Maybe Padding */
   borderRadius: number;
-  dataUnknown3: number;
+  dataUnknown3: number; // PM220: 3
   paperType: PaperType;
-  dataUnknown4: number;
-  dataUnknown5: number;
-  dataUnknown6: number;
+  dataUnknown4: number; // PM220: 6 /** Maybe GAP? */
+  dataUnknown5: number; // PM220: 18
+  dataUnknown6: number; // PM220: 21
   labelLength: number;
   maximunLabelWidth: number;
   labelWidth: number;
-  dataUnknown7: number;
+  dataUnknown7: number; // PM220: 45
 };
 
 function getPrinterStatusFromByte(byte: number): PrinterReadyStatus {
