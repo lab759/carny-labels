@@ -1,11 +1,42 @@
 <script setup lang="ts">
-import { Circle, Polyline, Rect, Textbox, type Canvas } from 'fabric';
+import { Circle, loadSVGFromString, Polyline, Rect, Textbox, util, type Canvas } from 'fabric';
 import { CircleIcon, MinusIcon, RectangleHorizontalIcon, TypeIcon } from 'lucide-vue-next';
 import AppButton from '../AppButton.vue';
+import SelectFileButton from '../SelectFileButton.vue';
 
 const props = defineProps<{
   canvas: Canvas;
 }>();
+
+async function loadSvgData(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input?.files?.[0];
+  if (!file) return;
+  const svgString = await file.text();
+  let loadedSVG = await loadSVGFromString(svgString);
+  const svgObjects = loadedSVG.objects.filter((o) => o != null);
+  let svgObjectGroup = util.groupSVGElements(svgObjects, loadedSVG.options);
+
+  svgObjectGroup.set({
+    originX: 'center',
+    originY: 'center',
+    visible: true,
+    selectable: true,
+  });
+  if (svgObjectGroup.getScaledWidth() > props.canvas.getWidth()) {
+    svgObjectGroup.scaleToWidth(props.canvas.getWidth());
+  }
+  if (svgObjectGroup.getScaledHeight() > props.canvas.getHeight()) {
+    svgObjectGroup.scaleToHeight(props.canvas.getHeight());
+  }
+
+  props.canvas?.add(svgObjectGroup);
+
+  props.canvas?.centerObject(svgObjectGroup);
+  props.canvas?.renderAll();
+
+  input.value = '';
+}
 </script>
 
 <template>
@@ -83,5 +114,6 @@ const props = defineProps<{
       "
       ><CircleIcon
     /></AppButton>
+    <SelectFileButton size="icon" variant="secondary" @input="loadSvgData" accept=".svg" />
   </div>
 </template>
