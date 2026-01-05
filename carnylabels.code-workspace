@@ -1,31 +1,31 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"extensions": {
-		"recommendations": [
-			"Vue.volar",
-			"prettier.prettier-vscode",
-			"bradlc.vscode-tailwindcss"
-		]
-	},
-	"settings": {
-		"explorer.fileNesting.enabled": true,
-		"explorer.fileNesting.patterns": {
-			"tsconfig.json": "tsconfig.*.json, env.d.ts",
-			"vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*",
-			"package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .oxlint*, oxlint*, .prettier*, prettier*, .editorconfig"
-		},
-		"editor.formatOnSave": true,
-		"editor.defaultFormatter": "prettier.prettier-vscode",
-		"editor.codeActionsOnSave": {
-			"source.organizeImports": "explicit",
-		},
-		"[typescript]": {
-			"editor.defaultFormatter": "prettier.prettier-vscode"
-		},
-		"oxc.typeAware": true
-	}
+  "folders": [
+    {
+      "path": ".",
+    },
+  ],
+  "extensions": {
+    "recommendations": ["Vue.volar", "prettier.prettier-vscode", "bradlc.vscode-tailwindcss"],
+  },
+  "settings": {
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+      "tsconfig.json": "tsconfig.*.json, env.d.ts",
+      "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*",
+      "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .oxlint*, oxlint*, .prettier*, prettier*, .editorconfig",
+    },
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "prettier.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "prettier.prettier-vscode",
+    },
+    "oxc.typeAware": true,
+    "tailwindCSS.classFunctions": ["cva", "cx"],
+    "files.associations": {
+      "*.css": "tailwindcss",
+    },
+  },
 }

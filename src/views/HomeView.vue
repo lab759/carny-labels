@@ -192,14 +192,20 @@ onUnmounted(() => {
   <main class="p-6 flex gap-5 justify-center">
     <div class="flex gap-3 flex-col">
       <div>
-        <AppButton class="text-lg" type="button" @click="handleConnect" :disabled="!isSupported">
+        <AppButton
+          class="rounded-full h-11 pr-3 text-lg"
+          variant="brand"
+          type="button"
+          @click="handleConnect"
+          :disabled="!isSupported"
+        >
           Connect
           <div class="rounded-full bg-white text-brand ml-2 p-2 -mr-1">
             <BluetoothIcon :size="18" />
           </div>
         </AppButton>
       </div>
-      <div v-if="connected">
+      <div v-if="connected" class="flex flex-col gap-3">
         <AppButton type="button" @click="handleDisconnect">DISCONNECT</AppButton>
         <AppButton type="button" @click="handleTest">Get Device Info</AppButton>
         <AppButton type="button" @click="getPrinterInfo">Get Printer Info</AppButton>

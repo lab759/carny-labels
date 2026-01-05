@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Line, Polyline, Rect, Textbox, type Canvas } from 'fabric';
+import { Circle, Polyline, Rect, Textbox, type Canvas } from 'fabric';
+import { CircleIcon, MinusIcon, RectangleHorizontalIcon, TypeIcon } from 'lucide-vue-next';
 import AppButton from '../AppButton.vue';
 
 const props = defineProps<{
@@ -10,6 +11,8 @@ const props = defineProps<{
 <template>
   <div class="flex gap-2">
     <AppButton
+      size="icon"
+      variant="secondary"
       @click="
         () => {
           const textBox = new Textbox('New Text', {
@@ -20,9 +23,11 @@ const props = defineProps<{
           props.canvas?.renderAll();
         }
       "
-      >Add Text</AppButton
-    >
+      ><TypeIcon
+    /></AppButton>
     <AppButton
+      size="icon"
+      variant="secondary"
       @click="
         () => {
           const rect = new Rect({
@@ -36,9 +41,12 @@ const props = defineProps<{
           props.canvas?.renderAll();
         }
       "
-      >Add Rectangle</AppButton
     >
+      <RectangleHorizontalIcon />
+    </AppButton>
     <AppButton
+      size="icon"
+      variant="secondary"
       @click="
         () => {
           const line = new Polyline(
@@ -55,7 +63,25 @@ const props = defineProps<{
           props.canvas?.renderAll();
         }
       "
-      >Add Line</AppButton
-    >
+      ><MinusIcon
+    /></AppButton>
+    <AppButton
+      size="icon"
+      variant="secondary"
+      @click="
+        () => {
+          const line = new Circle({
+            stroke: 'black',
+            strokeWidth: 2,
+            radius: 20,
+            left: 20,
+            top: 20,
+          });
+          props.canvas?.add(line);
+          props.canvas?.renderAll();
+        }
+      "
+      ><CircleIcon
+    /></AppButton>
   </div>
 </template>
